@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>spamx</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background-color: #ffc0cb; /* light pink */
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  color: white;
+  text-align: center;
+  overflow: hidden;
+  font-size: 22px;
+}
+.card {
+  background: rgba(0,0,0,0.25);
+  padding: 40px;
+  border-radius: 20px;
+  max-width: 400px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  position: relative;
+}
+.teddy {
+  font-size: 80px;
+  margin-bottom: 20px;
+  animation: bounce 2s infinite;
+}
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+.highlight {
+  font-size: 26px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #fff;
+}
+.buttons {
+  display: flex;
+  justify-content: center; /* center buttons */
+  gap: 20px; /* spacing between Yes and No */
+  margin-top: 20px;
+}
+button {
+  font-size: 20px;
+  padding: 12px 28px;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+button:hover {
+  transform: scale(1.05);
+}
+#yes {
+  background: #2ecc71;
+  color: white;
+}
+#no {
+  background: #e74c3c;
+  color: white;
+  position: relative; /* now relative so it starts next to Yes */
+  top: 0;
+  left: 0;
+}
+.floating {
+  position: fixed;
+  font-size: 50px;
+  pointer-events: none;
+  opacity: 0;
+  transition: transform 5s linear, opacity 5s linear;
+}
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="teddy">🧸</div>
+  <div class="highlight">Dhriti, will you be my Valentine?</div>
+  <div class="buttons">
+    <button id="yes" onclick="sayYes()">Yes 💖</button>
+    <button id="no" onclick="moveNo()">No 😅</button>
+  </div>
+</div>
+
+<script>
+const emojis = ["🍕", "🎵"]; // only pizza and music
+let noMoveCount = 0; // track how many times No has dodged
+
+function sayYes() {
+  document.body.innerHTML = `
+    <div style="
+      height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      flex-direction:column;
+      background-color:#ffc0cb;
+      color:white;
+      font-family:Arial;
+      text-align:center;">
+      <h1 style='font-size:50px;'>YAYYYY 💘🎉</h1>
+      <p style='font-size:28px;'>You've got a Musical Pizza DATE!</p>
+    </div>
+  `;
+
+  // create initial floating emojis
+  for (let i = 0; i < 30; i++) createFloating();
+  setInterval(createFloating, 1000); // continuous floating effect
+}
+
+function moveNo() {
+  const button = document.getElementById("no");
+  if (!button) return; // button may have disappeared
+
+  if (noMoveCount < 4) {
+    // move the button randomly
+    const x = Math.random() * (window.innerWidth - button.offsetWidth);
+    const y = Math.random() * (window.innerHeight - button.offsetHeight);
+    button.style.position = "absolute";
+    button.style.left = x + "px";
+    button.style.top = y + "px";
+    noMoveCount++;
+  } else {
+    // after 4 moves, hide the No button
+    button.remove();
+  }
+}
+
+function createFloating() {
+  const el = document.createElement("div");
+  el.className = "floating";
+  el.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
+  const startX = Math.random() * window.innerWidth;
+  const startY = window.innerHeight;
+  el.style.left = startX + "px";
+  el.style.top = startY + "px";
+  document.body.appendChild(el);
+
+  const deltaX = (Math.random() - 0.5) * 200;
+  const deltaY = - (Math.random() * 400 + 200); // float upward
+
+  setTimeout(() => {
+    el.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+    el.style.opacity = 1;
+  }, 50);
+
+  setTimeout(() => el.remove(), 5000);
+}
+
+// make No button dodge on hover and click
+const noButton = document.getElementById("no");
+if (noButton) {
+  noButton.addEventListener("mouseover", moveNo);
+  noButton.addEventListener("mousedown", moveNo);
+}
+</script>
+
+</body>
+</html>
